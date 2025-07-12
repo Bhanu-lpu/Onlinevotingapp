@@ -540,11 +540,12 @@ def vote():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([user_ip, candidate, timestamp])
 
-    return redirect(url_for('results'))
-
+return "⏳ Voting results will be available soon. Stay tuned!"
 
 @app.route('/results')
 def results():
+    return "⏳ Voting results will be available soon. Stay tuned!"
+
     all_votes = sheet.get_all_records()
     counts = {}
 
@@ -552,7 +553,6 @@ def results():
         name = vote['Candidate']
         counts[name] = counts.get(name, 0) + 1
 
-    return render_template('results.html', votes=counts)
-
+return "⏳ Voting results will be available soon. Stay tuned!"
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000, debug=True)
