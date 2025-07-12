@@ -530,16 +530,32 @@ def index():
 def vote():
     candidate = request.form.get('candidate')
     user_ip = request.remote_addr
+
+    if not candidate:
+        return "No candidate selected", 400
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    # Check if already voted
+    c.execute("SELECT 1 FROM voters WHERE ip = ?", (user_ip,))
+    if c.fetchone():
+        conn.close()
+        return "⚠️ You have already voted. Only one vote per user is allowed."
+
+    # Store in DB
+    c.execute("UPDATE votes SET count = count + 1 WHERE candidate = ?", (candidate,))
+    c.execute("INSERT INTO voters (ip) VALUES (?)", (user_ip,))
+    conn.commit()
+    conn.close()
+
+    # Store in Google Sheet
+    from datetime import datetime
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sheet.append_row([user_ip, candidate, timestamp])
 
-    # Check if IP already voted
-    ip_list = sheet.col_values(2)  # IP is in column 2
-    if user_ip in ip_list:
-        return "⚠️ You have already voted."
-
-    # Add vote to Google Sheet
-    sheet.append_row([candidate, user_ip, timestamp])
     return redirect(url_for('results'))
+
 
 @app.route('/results')
 def results():
