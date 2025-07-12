@@ -442,24 +442,24 @@ def vote():
     user_ip = request.remote_addr
 
     if not candidate:
-        return "❌ No candidate selected", 400
+        return "No candidate selected", 400
 
-    conn = get_db_connection()
-    c = conn.cursor()
-
-    # Check if already voted
-    c.execute("SELECT 1 FROM voters WHERE ip = ?", (user_ip,))
-    if c.fetchone():
-        conn.close()
-        return render_template('already_voted.html')  # Show nice page instead of plain message
+    # Check if IP already voted
+    with open('voted_ips.txt', 'r') as f:
+        voted_ips = f.read().splitlines()
+    if user_ip in voted_ips:
+        return "⚠️ You have already voted."
 
     # Save vote
-    c.execute("UPDATE votes SET count = count + 1 WHERE candidate = ?", (candidate,))
-    c.execute("INSERT INTO voters (ip) VALUES (?)", (user_ip,))
-    conn.commit()
-    conn.close()
+    with open('votes.txt', 'a') as f:
+        f.write(candidate + '\n')
+
+    # Save voter's IP
+    with open('voted_ips.txt', 'a') as f:
+        f.write(user_ip + '\n')
 
     return redirect(url_for('results'))
+
 
 # Show results based on permission
 @app.route('/results')
