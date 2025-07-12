@@ -309,103 +309,199 @@
 
 
 
+# from flask import Flask, request, render_template, redirect, url_for, session
+# import sqlite3
+
+# app = Flask(__name__)
+# app.secret_key = 'your_super_secret_key'  # Needed for session handling
+
+# # Developer IP and control for result visibility
+# DEVELOPER_IP = '127.0.0.1'   # Change this to your actual IP if needed
+# RESULTS_RELEASED = False     # Toggle to True to make results public
+
+
+# # ----------- Database Connection ----------- #
+# def get_db_connection():
+#     conn = sqlite3.connect('votes.db')
+#     conn.row_factory = sqlite3.Row
+#     return conn
+
+
+# # ----------- Main Voting Page ----------- #
+# @app.route('/')
+# def index():
+#     if session.get('has_voted'):
+#         return "⚠️ You have already voted. Only one vote per session allowed."
+#     return render_template('index.html')
+
+
+# # ----------- Voting Submission ----------- #
+# @app.route('/vote', methods=['POST'])
+# def vote():
+#     if session.get('has_voted'):
+#         return "⚠️ You have already voted. Only one vote per session allowed."
+
+#     candidate = request.form.get('candidate')
+
+#     if not candidate:
+#         return "No candidate selected", 400
+
+#     conn = get_db_connection()
+#     c = conn.cursor()
+#     c.execute("UPDATE votes SET count = count + 1 WHERE candidate = ?", (candidate,))
+#     conn.commit()
+#     conn.close()
+
+#     session['has_voted'] = True  # Mark session as voted
+#     return redirect(url_for('results'))
+
+
+# # ----------- Results Page ----------- #
+# @app.route('/results')
+# def results():
+#     user_ip = request.remote_addr
+
+#     # Block access unless results are released or user is developer or admin
+#     if not RESULTS_RELEASED and not session.get('admin_logged_in') and user_ip != DEVELOPER_IP:
+#         return render_template('comingsoon.html')  # Restrict access
+
+#     conn = get_db_connection()
+#     c = conn.cursor()
+#     c.execute("SELECT * FROM votes")
+#     vote_data = c.fetchall()
+#     conn.close()
+
+#     votes = {row['candidate']: row['count'] for row in vote_data}
+#     return render_template('results.html', votes=votes)
+
+
+
+# # ----------- Clear Session (Client-side Reset) ----------- #
+# @app.route('/clear')
+# def clear_votes():
+#     session.pop('has_voted', None)
+#     return redirect(url_for('index'))
+
+
+# # ----------- Admin Dashboard ----------- #
+# @app.route('/admin')
+# def admin_dashboard():
+#     user_ip = request.remote_addr
+#     if session.get('admin_logged_in') or user_ip == DEVELOPER_IP:
+#         return render_template('admin.html')
+#     else:
+#         return "⛔ Access Denied. Developer Only!"
+
+
+# # ----------- Admin Login ----------- #
+# @app.route('/admin-login', methods=['POST'])
+# def admin_login():
+#     username = request.form.get('username')
+#     password = request.form.get('password')
+
+#     if username == 'admin' and password == 'admin123':
+#         session['admin_logged_in'] = True
+#         return redirect(url_for('admin_dashboard'))
+#     else:
+#         return "❌ Invalid credentials", 401
+
+
+# # ----------- Flask Entry Point ----------- #
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=10000)
+
+
+
+
+
 from flask import Flask, request, render_template, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'your_super_secret_key'  # Needed for session handling
+app.secret_key = 'your_super_secret_key'  # Required for session handling
 
-# Developer IP and control for result visibility
-DEVELOPER_IP = '127.0.0.1'   # Change this to your actual IP if needed
-RESULTS_RELEASED = False     # Toggle to True to make results public
+# Developer control
+DEVELOPER_IP = '127.0.0.1'   # Replace with your real IP if deploying publicly
+RESULTS_RELEASED = False     # Change to True when you want public results
 
-
-# ----------- Database Connection ----------- #
+# Database connection function
 def get_db_connection():
     conn = sqlite3.connect('votes.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-
-# ----------- Main Voting Page ----------- #
+# Show index page always
 @app.route('/')
 def index():
-    if session.get('has_voted'):
-        return "⚠️ You have already voted. Only one vote per session allowed."
     return render_template('index.html')
 
-
-# ----------- Voting Submission ----------- #
+# Handle vote submission
 @app.route('/vote', methods=['POST'])
 def vote():
-    if session.get('has_voted'):
-        return "⚠️ You have already voted. Only one vote per session allowed."
-
     candidate = request.form.get('candidate')
+    user_ip = request.remote_addr
 
     if not candidate:
-        return "No candidate selected", 400
+        return "❌ No candidate selected", 400
 
     conn = get_db_connection()
     c = conn.cursor()
+
+    # Check if already voted
+    c.execute("SELECT 1 FROM voters WHERE ip = ?", (user_ip,))
+    if c.fetchone():
+        conn.close()
+        return render_template('already_voted.html')  # Show nice page instead of plain message
+
+    # Save vote
     c.execute("UPDATE votes SET count = count + 1 WHERE candidate = ?", (candidate,))
+    c.execute("INSERT INTO voters (ip) VALUES (?)", (user_ip,))
     conn.commit()
     conn.close()
 
-    session['has_voted'] = True  # Mark session as voted
     return redirect(url_for('results'))
 
-
-# ----------- Results Page ----------- #
+# Show results based on permission
 @app.route('/results')
 def results():
     user_ip = request.remote_addr
-
-    # Block access unless results are released or user is developer or admin
-    if not RESULTS_RELEASED and not session.get('admin_logged_in') and user_ip != DEVELOPER_IP:
-        return render_template('comingsoon.html')  # Restrict access
+    if not RESULTS_RELEASED and user_ip != DEVELOPER_IP:
+        return render_template('comingsoon.html')
 
     conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT * FROM votes")
-    vote_data = c.fetchall()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM votes")
+    vote_data = cursor.fetchall()
     conn.close()
 
     votes = {row['candidate']: row['count'] for row in vote_data}
     return render_template('results.html', votes=votes)
 
-
-
-# ----------- Clear Session (Client-side Reset) ----------- #
+# Optional clear button (UI only, no DB reset)
 @app.route('/clear')
 def clear_votes():
-    session.pop('has_voted', None)
     return redirect(url_for('index'))
 
-
-# ----------- Admin Dashboard ----------- #
+# Admin dashboard route (IP protected)
 @app.route('/admin')
 def admin_dashboard():
     user_ip = request.remote_addr
-    if session.get('admin_logged_in') or user_ip == DEVELOPER_IP:
+    if user_ip == DEVELOPER_IP:
         return render_template('admin.html')
     else:
         return "⛔ Access Denied. Developer Only!"
 
-
-# ----------- Admin Login ----------- #
+# Admin login (dummy check)
 @app.route('/admin-login', methods=['POST'])
 def admin_login():
     username = request.form.get('username')
     password = request.form.get('password')
-
     if username == 'admin' and password == 'admin123':
         session['admin_logged_in'] = True
-        return redirect(url_for('admin_dashboard'))
+        return redirect('/admin')
     else:
         return "❌ Invalid credentials", 401
 
-
-# ----------- Flask Entry Point ----------- #
+# Run app on Render
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
