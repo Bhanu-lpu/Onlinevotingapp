@@ -534,9 +534,7 @@ def vote():
     if not candidate:
         return "No candidate selected", 400
 
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    
     # Check if already voted
     c.execute("SELECT 1 FROM voters WHERE ip = ?", (user_ip,))
     if c.fetchone():
