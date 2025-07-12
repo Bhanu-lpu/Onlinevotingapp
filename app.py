@@ -300,11 +300,6 @@ def admin_login():
     else:
         return "❌ Invalid credentials", 401
 
-@app.route('/admin')
-def admin_dashboard():
-    if not session.get('admin_logged_in'):
-        return "❌ Access Denied", 403
-    return render_template('admin.html')  # Create this HTML
 
 if __name__ == '__main__':
     app.run(debug=True, port=10000)
