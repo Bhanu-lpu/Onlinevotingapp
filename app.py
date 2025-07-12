@@ -360,8 +360,10 @@ def vote():
 @app.route('/results')
 def results():
     user_ip = request.remote_addr
-    if not RESULTS_RELEASED and user_ip != DEVELOPER_IP and not session.get('admin_logged_in'):
-        return render_template('comingsoon.html')
+
+    # Block access unless results are released or user is developer or admin
+    if not RESULTS_RELEASED and not session.get('admin_logged_in') and user_ip != DEVELOPER_IP:
+        return render_template('comingsoon.html')  # Restrict access
 
     conn = get_db_connection()
     c = conn.cursor()
@@ -371,6 +373,7 @@ def results():
 
     votes = {row['candidate']: row['count'] for row in vote_data}
     return render_template('results.html', votes=votes)
+
 
 
 # ----------- Clear Session (Client-side Reset) ----------- #
