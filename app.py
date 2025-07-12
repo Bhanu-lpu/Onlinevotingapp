@@ -569,4 +569,4 @@ def results():
     return render_template('results.html', votes=counts)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+    app.run(host='0.0.0.0', port=10000, debug=True)
