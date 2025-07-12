@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    .chart { margin: auto; width: 100%; max-width: 600px; }
+    table { width: 60%; margin: auto; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>🗳️ Admin Voting Dashboard</h1>
+
+  <div class="chart" id="piechart_3d"></div>
+
+  <script>
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+    
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ['Candidate', 'Votes'],
+        {% for vote in votes %}
+          ['{{ vote["candidate"] }}', {{ vote["count"] }}],
+        {% endfor %}
+      ]);
+
+      var options = {
+        title: 'Current Vote Count',
+        is3D: true,
+        pieSliceText: 'value',
+        backgroundColor: '#f9f9f9'
+      };
+
+      var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+      chart.draw(data, options);
+    }
+  </script>
+
+  <h2>🧑‍💻 Voter IP Logs</h2>
+  <table>
+    <tr><th>IP Address</th></tr>
+    {% for voter in voters %}
+      <tr><td>{{ voter["ip"] }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

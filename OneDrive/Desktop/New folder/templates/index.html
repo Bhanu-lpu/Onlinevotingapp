@@ -1,0 +1,58 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Online Voting</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>Vote for Your Favorite Candidate</h1>
+    <form action="/vote" method="POST">
+    <label class="janasena">
+      <input type="radio" name="candidate" value="Janasena"> Janasena
+    </label>
+    <label class="tdp">
+      <input type="radio" name="candidate" value="TDP"> TDP
+    </label>
+    <label class="ysrcp">
+      <input type="radio" name="candidate" value="YSRCP"> YSRCP
+    </label>
+    <label class="nota">
+      <input type="radio" name="candidate" value="NOTA"> NOTA
+    </label>
+    <br>
+    <input type="submit" value="Vote" class="vote-btn">
+    <div class="button-group">
+
+    <button type="button" class="btn results-btn" onclick="window.location.href='/results'">View Results</button>
+    <input type="reset" value="Clear Selection" class="btn clear-btn">
+
+  </div>
+  <!-- Existing Voting Form -->
+<form action="/vote" method="POST">
+  <!-- ...your candidate radio buttons and submit buttons here... -->
+</form>
+
+<!-- Admin Login Section -->
+{% comment %} <div class="admin-login">
+  <h2>Admin Login</h2>
+  <form action="/admin-login" method="POST">
+    <input type="text" name="username" placeholder="Username" required><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+  </form>
+</div> {% endcomment %}
+
+
+  </form>
+
+      <footer>
+        <p>&copy; 2025 Online Voting System<br>
+        Developer -- <b>CODE WITH BSS</b></p>
+      </footer>
+    </div>
+  </body>
+  </html>
