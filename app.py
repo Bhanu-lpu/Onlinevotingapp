@@ -539,8 +539,7 @@ def vote():
     from datetime import datetime
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([user_ip, candidate, timestamp])
-
-return "⏳ Voting results will be available soon. Stay tuned!"
+    return "⏳ Voting results will be available soon. Stay tuned!"
 
 @app.route('/results')
 def results():
