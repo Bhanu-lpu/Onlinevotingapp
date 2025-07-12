@@ -534,18 +534,6 @@ def vote():
     if not candidate:
         return "No candidate selected", 400
 
-    
-    # Check if already voted
-    c.execute("SELECT 1 FROM voters WHERE ip = ?", (user_ip,))
-    if c.fetchone():
-        conn.close()
-        return "⚠️ You have already voted. Only one vote per user is allowed."
-
-    # Store in DB
-    c.execute("UPDATE votes SET count = count + 1 WHERE candidate = ?", (candidate,))
-    c.execute("INSERT INTO voters (ip) VALUES (?)", (user_ip,))
-    conn.commit()
-    conn.close()
 
     # Store in Google Sheet
     from datetime import datetime
