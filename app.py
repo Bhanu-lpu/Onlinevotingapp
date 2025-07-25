@@ -20,6 +20,14 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", sco
 client = gspread.authorize(creds)
 sheet = client.open("OnlineVotingData").sheet1
 
+def load_translation(lang_code):
+    path = os.path.join("translations", f"{lang_code}.json")
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return {}  # fallback if language not found
+
+
 def has_already_voted(user_ip):
     records = sheet.get_all_records()
     return any(record["IP Address"] == user_ip for record in records)
@@ -31,10 +39,14 @@ def get_results_flag():
 
 @app.route('/')
 def index():
+    lang = request.args.get("lang", "en")  # default to English
+    translations = load_translation(lang)
+
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
     voted = session.get("voted", False)
-    return render_template('index.html', show_results=show_results, voted=voted)
+
+    return render_template('index.html', show_results=show_results, voted=voted, t=translations)
 
 
 
