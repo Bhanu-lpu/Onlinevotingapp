@@ -202,21 +202,103 @@ body {
   background-color: #ddd;
   cursor: pointer;
 }
+/* Default Light Theme */
+body {
+  background-color: #f0f0f0;
+  color: #111;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-/* Dark Mode */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+footer {
+  text-align: center;
+  margin-top: 30px;
+  color: #666;
+}
+
+/* Candidate layout */
+.candidate {
+  margin-bottom: 15px;
+}
+
+.candidate label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+/* Candidate images */
+.leader-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid red;
+  object-fit: cover;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+/* =================== DARK MODE =================== */
+
 body.dark {
-  background-color: #111;
-  color: #f9f9f9;
+  background-color: #121212;
+  color: #eee;
 }
 
 body.dark .candidate label {
-  background-color: #222;
-  color: #f9f9f9;
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+body.dark button {
+  background-color: #444;
+  color: #eee;
+}
+
+body.dark button:hover {
+  background-color: #666;
+}
+
+body.dark footer {
+  color: #aaa;
 }
 
 body.dark .theme-toggle button {
-  background-color: #444;
+  background-color: #333;
   color: white;
+  border: 1px solid #555;
 }
-
 
