@@ -1,106 +1,103 @@
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <title>Online Voting</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <title>{{ t["title"] }}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-  </head>
-  <body>
-    {% if voted and show_results %}
-<div class="notification" style="background-color: #d4edda; padding: 10px; border: 1px solid green; color: green; border-radius: 5px; margin-bottom: 15px;">
-    📢 Results have been released! <a href="/results">Click here to view</a>.
-</div>
-{% endif %}
-
-    <div class="container">
-      <h1>Vote for Your Favorite Candidate</h1>
-      <div class="theme-toggle">
-  <button id="themeButton">🌙 Dark Mode</button>
-</div>
-
-      <form method="get" action="/" style="margin-bottom: 1rem;">
-  <select name="lang" onchange="this.form.submit()">
-    <option value="en" {% if request.args.get('lang') == 'en' %}selected{% endif %}>English</option>
-    <option value="te" {% if request.args.get('lang') == 'te' %}selected{% endif %}>తెలుగు</option>
-    <option value="hi" {% if request.args.get('lang') == 'hi' %}selected{% endif %}>हिन्दी</option>
-  </select>
-</form>
-
-<form action="/vote" method="post">
-  <div class="candidate">
-    <input type="radio" name="party" value="TDP" id="tdp">
-    <label for="tdp">
-      <img src="/static/images/CBN.webp" class="leader-img" alt="Chandra Babu Naidu">
-      Telugu Desam Party (TDP)
-    </label>
+  {% if voted and show_results %}
+  <div class="notification" style="background-color: #d4edda; padding: 10px; border: 1px solid green; color: green; border-radius: 5px; margin-bottom: 15px;">
+      📢 {{ t["results_released"] }} <a href="/results?lang={{ lang }}">{{ t["click_here"] }}</a>.
   </div>
+  {% endif %}
 
-  <div class="candidate">
-    <input type="radio" name="party" value="Janasena" id="janasena">
-    <label for="janasena">
-      <img src="/static/images/KALYAN.webp" class="leader-img" alt="Pawan Kalyan">
-      JanaSena Party
-    </label>
-  </div>
+  <div class="container">
+    <h1>{{ t["title"] }}</h1>
 
-  <div class="candidate">
-    <input type="radio" name="party" value="YSRCP" id="ysrcp">
-    <label for="ysrcp">
-      <img src="/static/images/YSRCP.webp" class="leader-img" alt="Y.S. Jagan Mohan Reddy">
-      YSR Congress Party (YSRCP)
-    </label>
-  </div>
-  <div class="candidate">
-  <input type="radio" id="nota" name="party" value="NOTA">
-  <label for="nota" class="nota">
-    <img src="/static/images/NOTA.webp" class="leader-img">
-    None of the Above (NOTA)
-  </label>
-</div>
-
-
-  <button type="button" onclick="clearSelection()">Clear Vote</button>
-  <button type="submit">Vote</button>
-  {% if show_results %}
-    <a href="{{ url_for('results') }}" class="btn btn-primary mt-3">View Results</a>
-{% endif %}
-
-
-
- <footer>
-        <p>&copy; 2025 Online Voting System<br>
-        Developer -- <b>CODE WITH BSS</b></p>
-      </footer>
+    <div class="theme-toggle">
+      <button id="themeButton">{{ t["theme_button"] }}</button>
     </div>
-  
-    
-<script>
-  function clearSelection() {
-    const radios = document.querySelectorAll('input[name="party"]');
-    radios.forEach(radio => radio.checked = false);
-  }
 
-  const button = document.getElementById('themeButton');
-  const body = document.body;
+    <form method="get" action="/" style="margin-bottom: 1rem;">
+      <label for="lang">{{ t["language_label"] }}: </label>
+      <select name="lang" onchange="this.form.submit()">
+        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+        <option value="te" {% if lang == 'te' %}selected{% endif %}>తెలుగు</option>
+        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिन्दी</option>
+      </select>
+    </form>
 
-  // Apply saved theme on load
-  if (localStorage.getItem('theme') === 'dark') {
-    body.classList.add('dark');
-    button.textContent = '🌞 Light Mode';
-  }
+    <form action="/vote" method="post">
+      <div class="candidate">
+        <input type="radio" name="party" value="TDP" id="tdp">
+        <label for="tdp">
+          <img src="/static/images/CBN.webp" class="leader-img" alt="Chandra Babu Naidu">
+          Telugu Desam Party (TDP)
+        </label>
+      </div>
 
-  // Toggle theme
-  button.onclick = () => {
-    body.classList.toggle('dark');
-    const isDark = body.classList.contains('dark');
-    button.textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  };
+      <div class="candidate">
+        <input type="radio" name="party" value="Janasena" id="janasena">
+        <label for="janasena">
+          <img src="/static/images/KALYAN.webp" class="leader-img" alt="Pawan Kalyan">
+          JanaSena Party
+        </label>
+      </div>
 
+      <div class="candidate">
+        <input type="radio" name="party" value="YSRCP" id="ysrcp">
+        <label for="ysrcp">
+          <img src="/static/images/YSRCP.webp" class="leader-img" alt="Y.S. Jagan Mohan Reddy">
+          YSR Congress Party (YSRCP)
+        </label>
+      </div>
 
-</script>
+      <div class="candidate">
+        <input type="radio" id="nota" name="party" value="NOTA">
+        <label for="nota" class="nota">
+          <img src="/static/images/NOTA.webp" class="leader-img">
+          None of the Above (NOTA)
+        </label>
+      </div>
 
-  </body>
-  </html>
+      <button type="button" onclick="clearSelection()">{{ t["clear_vote"] }}</button>
+      <button type="submit">{{ t["vote_button"] }}</button>
+
+      {% if show_results %}
+        <a href="{{ url_for('results', lang=lang) }}" class="btn btn-primary mt-3">{{ t["view_results"] }}</a>
+      {% endif %}
+    </form>
+
+    <footer>
+      <p>&copy; 2025 Online Voting System<br>
+      Developer -- <b>CODE WITH BSS</b></p>
+    </footer>
+  </div>
+
+  <script>
+    function clearSelection() {
+      const radios = document.querySelectorAll('input[name="party"]');
+      radios.forEach(radio => radio.checked = false);
+    }
+
+    const button = document.getElementById('themeButton');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark');
+      button.textContent = '{{ t["theme_button"].replace("🌙", "🌞").replace("Dark", "Light") }}';
+    }
+
+    button.onclick = () => {
+      body.classList.toggle('dark');
+      const isDark = body.classList.contains('dark');
+      button.textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    };
+  </script>
+
+</body>
+</html>
