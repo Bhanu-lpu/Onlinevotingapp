@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Confirm Your Vote</title>
+</head>
+<body>
+  <h2>🗳️ Confirm Your Vote</h2>
+  <p>You selected: <strong>{{ party }}</strong></p>
+
+  <form action="/vote" method="post">
+    <input type="hidden" name="party" value="{{ party }}">
+    <button type="submit">✅ Confirm Vote</button>
+  </form>
+
+  <br>
+  <a href="/">🔙 Go Back</a>
+</body>
+</html>
