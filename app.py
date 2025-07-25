@@ -8,7 +8,7 @@ app.secret_key = "supersecretkey"  # Change this to a strong, secure value
 
 # ================== Config ==================
 DEVELOPER_IP = 'your.ip.address.here'  # Replace with your IP
-ADMIN_PASSWORD = "admin123"  # Change this to your secret password
+ADMIN_PASSWORD = "CodeWithBss8923"  # Change this to your secret password
 RESULTS_RELEASED = False  # Memory-stored flag (can be improved)
 
 # ================ Google Sheets Setup ================
