@@ -8,6 +8,12 @@
 
   </head>
   <body>
+    {% if voted and show_results %}
+<div class="notification" style="background-color: #d4edda; padding: 10px; border: 1px solid green; color: green; border-radius: 5px; margin-bottom: 15px;">
+    📢 Results have been released! <a href="/results">Click here to view</a>.
+</div>
+{% endif %}
+
     <div class="container">
       <h1>Vote for Your Favorite Candidate</h1>
       <div class="theme-toggle">
