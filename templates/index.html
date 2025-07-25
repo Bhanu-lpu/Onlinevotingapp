@@ -20,6 +20,14 @@
   <button id="themeButton">🌙 Dark Mode</button>
 </div>
 
+      <form method="get" action="/" style="margin-bottom: 1rem;">
+  <select name="lang" onchange="this.form.submit()">
+    <option value="en" {% if request.args.get('lang') == 'en' %}selected{% endif %}>English</option>
+    <option value="te" {% if request.args.get('lang') == 'te' %}selected{% endif %}>తెలుగు</option>
+    <option value="hi" {% if request.args.get('lang') == 'hi' %}selected{% endif %}>हिन्दी</option>
+  </select>
+</form>
+
 <form action="/vote" method="post">
   <div class="candidate">
     <input type="radio" name="party" value="TDP" id="tdp">
