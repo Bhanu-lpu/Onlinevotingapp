@@ -10,11 +10,11 @@
   <body>
     <div class="container">
       <h1>Vote for Your Favorite Candidate</h1>
-    <form action="/vote" method="post">
+<form action="/vote" method="post">
   <div class="candidate">
     <input type="radio" name="party" value="tdp" id="tdp">
     <label for="tdp">
-      <img src="/static/images/CBN.webp" alt="Chandra Babu Naidu" class="leader-img">
+      <img src="/static/images/CBN.webp" class="leader-img" alt="Chandra Babu Naidu">
       Telugu Desam Party (TDP)
     </label>
   </div>
@@ -22,7 +22,7 @@
   <div class="candidate">
     <input type="radio" name="party" value="janasena" id="janasena">
     <label for="janasena">
-      <img src="/static/images/KALYAN.webp" alt="Pawan Kalyan" class="leader-img">
+      <img src="/static/images/KALYAN.webp" class="leader-img" alt="Pawan Kalyan">
       JanaSena Party
     </label>
   </div>
@@ -30,17 +30,27 @@
   <div class="candidate">
     <input type="radio" name="party" value="ysrcp" id="ysrcp">
     <label for="ysrcp">
-      <img src="/static/images/YSRCP.webp" alt="Y.S. Jagan Mohan Reddy" class="leader-img">
-      Yuvajana Sramika Rythu Congress Party (YSRCP)
+      <img src="/static/images/YSRCP.webp" class="leader-img" alt="Y.S. Jagan Mohan Reddy">
+      YSR Congress Party (YSRCP)
     </label>
   </div>
 
+  <button type="button" onclick="clearSelection()">Clear Vote</button>
   <button type="submit">Vote</button>
 </form>
+
  <footer>
         <p>&copy; 2025 Online Voting System<br>
         Developer -- <b>CODE WITH BSS</b></p>
       </footer>
     </div>
   </body>
+    
+<script>
+  function clearSelection() {
+    const radios = document.querySelectorAll('input[name="party"]');
+    radios.forEach(radio => radio.checked = false);
+  }
+</script>
+
   </html>
