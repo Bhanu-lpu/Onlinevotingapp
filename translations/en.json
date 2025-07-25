@@ -9,4 +9,7 @@
   "release_results": "Release Results",
   "hide_results": "Hide Results",
   "logout": "Logout"
+  "title": "Online Voting System",
+  "vote_button": "Vote",
+  "theme_button": "🌙 Dark Mode"
 }
