@@ -1,17 +1,17 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, flash
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "1644"  # Change this to a strong, secure value
+app.secret_key = "1644"  # Change this in production
 
-# ================== Config ==================
-DEVELOPER_IP = '49.205.104.10'  # Replace with your IP
-ADMIN_PASSWORD = "CodeWithBss8923"  # Change this to your secret password
-RESULTS_RELEASED = False  # Memory-stored flag (can be improved)
+# ========== Configuration ==========
+DEVELOPER_IP = '49.205.104.10'
+ADMIN_PASSWORD = "CodeWithBss8923"
+RESULTS_RELEASED = False
 
-# ================ Google Sheets Setup ================
+# ========== Google Sheets Setup ==========
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
@@ -21,11 +21,13 @@ def has_already_voted(user_ip):
     records = sheet.get_all_records()
     return any(record["IP Address"] == user_ip for record in records)
 
-# ================= Routes =================
+# ========== Routes ==========
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
+    return render_template('index.html', show_results=show_results)
 
 @app.route('/vote', methods=['POST'])
 def vote():
@@ -36,7 +38,7 @@ def vote():
         return "⚠️ No candidate selected", 400
 
     if has_already_voted(user_ip):
-        return "⚠️ You have already voted. Only one vote per user is allowed."
+        return "⚠️ You have already voted."
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([now, user_ip, candidate])
@@ -60,50 +62,14 @@ def results():
     return render_template("results.html", votes=result_count)
 
 @app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    if request.method == 'POST':
-        password = request.form.get('password')
-        if password == ADMIN_PASSWORD:
-            session['admin_logged_in'] = True
-            return redirect(url_for('admin_panel'))
-        else:
-            return "❌ Incorrect password"
-    return render_template("admin_login.html")
-
-@app.route('/admin-panel', methods=['GET', 'POST'])
-def admin_panel():
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('admin'))
-
-    global RESULTS_RELEASED
-    if request.method == 'POST':
-        action = request.form.get('action')
-        RESULTS_RELEASED = True if action == 'release' else False
-        session['results_released'] = RESULTS_RELEASED
-
-    return render_template("admin_panel.html", released=RESULTS_RELEASED)
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
-
-@app.route('/clear')
-def clear_votes():
-    return redirect(url_for('index'))
-    from flask import session, flash
-
-app.secret_key = "your_secret_key_here"  # Required for session management
-
-@app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
         password = request.form.get('password')
-        if password == 'admin123':  # You can change this password
+        if password == ADMIN_PASSWORD:
             session['admin'] = True
             return redirect(url_for('admin_dashboard'))
         else:
-            flash("Incorrect password", "error")
+            flash("❌ Incorrect password", "error")
     return render_template('admin_login.html')
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
@@ -111,16 +77,28 @@ def admin_dashboard():
     if not session.get('admin'):
         return redirect(url_for('admin_login'))
 
+    global RESULTS_RELEASED
     if request.method == 'POST':
         action = request.form.get('action')
-        global RESULTS_RELEASED
         if action == 'release':
             RESULTS_RELEASED = True
+            session['results_released'] = True
         elif action == 'hide':
             RESULTS_RELEASED = False
+            session['results_released'] = False
+
     return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED)
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
-# ================= Server =================
+# Clear vote option (optional)
+@app.route('/clear')
+def clear_votes():
+    return redirect(url_for('index'))
+
+# ========== Server ==========
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
