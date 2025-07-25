@@ -255,6 +255,15 @@ footer {
   border: 1px solid #ccc;
   cursor: pointer;
 }
+label.nota {
+  background-color: #f9f9f9;
+  border-color: #777;
+}
+
+label.nota:hover {
+  background-color: #e0e0e0;
+  border-color: #555;
+}
 
 /* Candidate images */
 .leader-img {
