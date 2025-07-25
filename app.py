@@ -5,20 +5,22 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Configure developer IP and result control
-DEVELOPER_IP = 'your.ip.address.here'  # Replace with your real IP (check it on https://whatismyipaddress.com)
-RESULTS_RELEASED = False  # Change to True to allow users to see results
+# ================== Configuration ==================
+DEVELOPER_IP = 'your.ip.address.here'  # ← Replace with your real IP
+RESULTS_RELEASED = False  # Change to True to allow users to view results
 
-# Google Sheets Setup
+# ================ Google Sheets Setup ================
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("OnlineVotingData").sheet1
 
-# Helper to check if user already voted
+# ================ IP Check Function ================
 def has_already_voted(user_ip):
     records = sheet.get_all_records()
     return any(record["IP Address"] == user_ip for record in records)
+
+# ===================== Routes =====================
 
 @app.route('/')
 def index():
@@ -26,13 +28,8 @@ def index():
 
 @app.route('/vote', methods=['POST'])
 def vote():
-    candidate = request.form.get('party')
+    candidate = request.form.get('party')  # The value from the radio input
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    if party == "NOTA":
-    # Save the vote to your Google Sheet or DB
-    # Example:
-    worksheet.append_row([ip, "NOTA", timestamp])
-
 
     if not candidate:
         return "⚠️ No candidate selected", 400
@@ -63,8 +60,8 @@ def results():
 
 @app.route('/clear')
 def clear_votes():
-    return redirect(url_for('index'))
+    return redirect(url_for('index'))  # Just reload the homepage (vote not stored until POST)
 
+# ================== Run Server ==================
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
-
