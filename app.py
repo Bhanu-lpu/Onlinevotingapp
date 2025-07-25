@@ -9,18 +9,18 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "1644"  # Change this in production
 
-# ========== Configuration ==========
-DEVELOPER_IP = '49.205.104.10'
+# === Configuration ===
+DEVELOPER_IP = '49.205.104.10'  # Replace with your IP
 ADMIN_PASSWORD = "CodeWithBss8923"
 RESULTS_RELEASED = False
 
-# ========== Google Sheets Setup ==========
+# === Google Sheets Setup ===
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("OnlineVotingData").sheet1
 
-# ========== Utility Functions ==========
+# === Utility Functions ===
 def load_translation(lang_code):
     path = os.path.join("translations", f"{lang_code}.json")
     if os.path.exists(path):
@@ -31,16 +31,16 @@ def load_translation(lang_code):
 
 def has_already_voted(user_ip):
     records = sheet.get_all_records()
-    return any(record["IP Address"] == user_ip for record in records)
+    return any(record.get("IP Address") == user_ip for record in records)
 
 def get_results_flag():
     return session.get("results_released", RESULTS_RELEASED)
 
-# ========== Routes ==========
+# === Routes ===
 @app.route('/')
 def index():
     lang = request.args.get("lang", "en")
-    session['lang'] = lang  # store user language in session
+    session['lang'] = lang
     translations = load_translation(lang)
 
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -67,8 +67,10 @@ def vote():
     ist = pytz.timezone('Asia/Kolkata')
     now = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
 
+    # Make sure these headers are exactly in the sheet: Timestamp | IP Address | Candidate
     sheet.append_row([now, user_ip, candidate])
     session['voted'] = True
+
     return redirect(url_for('thanks', lang=lang))
 
 
@@ -83,8 +85,8 @@ def thanks():
 def results():
     lang = session.get('lang', 'en')
     translations = load_translation(lang)
-
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
     if not session.get("results_released", RESULTS_RELEASED) and user_ip != DEVELOPER_IP:
         return render_template("comingsoon.html", t=translations, lang=lang)
 
@@ -146,6 +148,7 @@ def logout():
 def clear_votes():
     return redirect(url_for('index'))
 
-# ========== Run Server ==========
+
+# === Run App ===
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+    app.run(debug=True, port=10000)
