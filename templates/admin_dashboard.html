@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h2>Welcome Admin</h2>
+    <p>Current Results Status: <strong>{{ 'Released' if results_released else 'Hidden' }}</strong></p>
+
+    <form method="post">
+        <button type="submit" name="action" value="release">📢 Release Results</button>
+        <button type="submit" name="action" value="hide">🚫 Hide Results</button>
+    </form>
+
+    <br><br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
