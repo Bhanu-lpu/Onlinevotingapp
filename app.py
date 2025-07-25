@@ -54,19 +54,19 @@ def thanks():
 @app.route('/results')
 def results():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    if not get_results_flag() and user_ip != DEVELOPER_IP:
+    if not session.get("results_released", RESULTS_RELEASED) and user_ip != DEVELOPER_IP:
         return render_template("comingsoon.html")
 
-    allowed_candidates = ["TDP", "JSP", "YSRCP", "NOTA"]
     records = sheet.get_all_records()
-    result_count = {c: 0 for c in allowed_candidates}
+    result_count = {}
 
     for record in records:
         candidate = record.get("Candidate", "").strip()
-        if candidate in allowed_candidates:
-            result_count[candidate] += 1
+        if candidate:
+            result_count[candidate] = result_count.get(candidate, 0) + 1
 
     return render_template("results.html", votes=result_count)
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
