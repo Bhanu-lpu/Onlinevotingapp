@@ -120,11 +120,6 @@ def admin_dashboard():
             RESULTS_RELEASED = False
     return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED)
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
-
 
 # ================= Server =================
 if __name__ == '__main__':
