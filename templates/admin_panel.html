@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Panel</title></head>
+<body>
+  <h2>⚙️ Admin Panel</h2>
+  <p>Result Status: <b>{{ 'Released' if released else 'Hidden' }}</b></p>
+  <form method="POST">
+    <button name="action" value="release">📢 Release Results</button>
+    <button name="action" value="hide">🙈 Hide Results</button>
+  </form>
+  <br>
+  <a href="{{ url_for('logout') }}">🚪 Logout</a>
+</body>
+</html>
