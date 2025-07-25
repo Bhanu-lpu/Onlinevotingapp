@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, redirect, url_for, session, f
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 app.secret_key = "1644"  # Change this in production
@@ -10,7 +9,7 @@ app.secret_key = "1644"  # Change this in production
 # ========== Configuration ==========
 DEVELOPER_IP = '49.205.104.10'
 ADMIN_PASSWORD = "CodeWithBss8923"
-RESULT_FLAG_FILE = "result_flag.txt"
+RESULTS_RELEASED = False
 
 # ========== Google Sheets Setup ==========
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -18,25 +17,19 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", sco
 client = gspread.authorize(creds)
 sheet = client.open("OnlineVotingData").sheet1
 
-# ========== Utility Functions ==========
 def has_already_voted(user_ip):
     records = sheet.get_all_records()
     return any(record["IP Address"] == user_ip for record in records)
 
-def is_result_released():
-    return os.path.exists(RESULT_FLAG_FILE)
-
-def set_result_release(status):
-    if status:
-        open(RESULT_FLAG_FILE, 'w').close()
-    elif os.path.exists(RESULT_FLAG_FILE):
-        os.remove(RESULT_FLAG_FILE)
+def get_results_flag():
+    return session.get("results_released", RESULTS_RELEASED)
 
 # ========== Routes ==========
+
 @app.route('/')
 def index():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    show_results = is_result_released() or user_ip == DEVELOPER_IP
+    show_results = get_results_flag() or user_ip == DEVELOPER_IP
     return render_template('index.html', show_results=show_results)
 
 @app.route('/vote', methods=['POST'])
@@ -45,10 +38,10 @@ def vote():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     if not candidate:
-        return "\u26a0\ufe0f No candidate selected", 400
+        return "⚠️ No candidate selected", 400
 
     if has_already_voted(user_ip):
-        return "\u26a0\ufe0f You have already voted."
+        return "⚠️ You have already voted."
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([now, user_ip, candidate])
@@ -56,7 +49,8 @@ def vote():
 
 @app.route('/thanks')
 def thanks():
-    return "\u2705 Thank you for voting!"
+    return "✅ Thank you for voting!"
+
 @app.route('/results')
 def results():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -74,7 +68,6 @@ def results():
 
     return render_template("results.html", votes=result_count)
 
-
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -83,7 +76,7 @@ def admin_login():
             session['admin'] = True
             return redirect(url_for('admin_dashboard'))
         else:
-            flash("\u274c Incorrect password", "error")
+            flash("❌ Incorrect password", "error")
     return render_template('admin_login.html')
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
@@ -91,14 +84,17 @@ def admin_dashboard():
     if not session.get('admin'):
         return redirect(url_for('admin_login'))
 
+    global RESULTS_RELEASED
     if request.method == 'POST':
         action = request.form.get('action')
         if action == 'release':
-            set_result_release(True)
+            RESULTS_RELEASED = True
+            session['results_released'] = True
         elif action == 'hide':
-            set_result_release(False)
+            RESULTS_RELEASED = False
+            session['results_released'] = False
 
-    return render_template("admin_dashboard.html", results_released=is_result_released())
+    return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED)
 
 @app.route('/logout')
 def logout():
