@@ -28,6 +28,11 @@ def index():
 def vote():
     candidate = request.form.get('party')
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if party == "NOTA":
+    # Save the vote to your Google Sheet or DB
+    # Example:
+    worksheet.append_row([ip, "NOTA", timestamp])
+
 
     if not candidate:
         return "⚠️ No candidate selected", 400
