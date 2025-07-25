@@ -88,6 +88,14 @@ def admin_login():
             flash("❌ Incorrect password", "error")
     return render_template('admin_login.html')
 
+@app.route('/confirm_vote', methods=['POST'])
+def confirm_vote():
+    selected_party = request.form.get('party')
+    if not selected_party:
+        return "⚠️ No candidate selected", 400
+
+    return render_template('confirm_vote.html', party=selected_party)
+
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
     if not session.get('admin'):
