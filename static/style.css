@@ -183,4 +183,40 @@ label.nota:hover {
   border: 2px solid red;
   object-fit: cover;
 }
+/* Light Mode (Default) */
+body {
+  background-color: #f9f9f9;
+  color: #111;
+  transition: 0.3s ease;
+}
+
+.theme-toggle {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.theme-toggle button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+/* Dark Mode */
+body.dark {
+  background-color: #111;
+  color: #f9f9f9;
+}
+
+body.dark .candidate label {
+  background-color: #222;
+  color: #f9f9f9;
+}
+
+body.dark .theme-toggle button {
+  background-color: #444;
+  color: white;
+}
+
 
