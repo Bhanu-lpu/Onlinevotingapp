@@ -91,6 +91,40 @@ def logout():
 @app.route('/clear')
 def clear_votes():
     return redirect(url_for('index'))
+    from flask import session, flash
+
+app.secret_key = "your_secret_key_here"  # Required for session management
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == 'admin123':  # You can change this password
+            session['admin'] = True
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Incorrect password", "error")
+    return render_template('admin_login.html')
+
+@app.route('/admin/dashboard', methods=['GET', 'POST'])
+def admin_dashboard():
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        global RESULTS_RELEASED
+        if action == 'release':
+            RESULTS_RELEASED = True
+        elif action == 'hide':
+            RESULTS_RELEASED = False
+    return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 
 # ================= Server =================
 if __name__ == '__main__':
