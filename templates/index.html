@@ -49,6 +49,10 @@
 
   <button type="button" onclick="clearSelection()">Clear Vote</button>
   <button type="submit">Vote</button>
+  {% if show_results %}
+    <a href="{{ url_for('results') }}" class="btn btn-primary mt-3">View Results</a>
+{% endif %}
+
 </form>
 
  <footer>
