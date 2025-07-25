@@ -4,7 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Change this to a strong, secure value
+app.secret_key = "1644"  # Change this to a strong, secure value
 
 # ================== Config ==================
 DEVELOPER_IP = '49.205.104.10'  # Replace with your IP
