@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Change this to a strong, secure value
 
 # ================== Config ==================
-DEVELOPER_IP = 'your.ip.address.here'  # Replace with your IP
+DEVELOPER_IP = '49.205.104.10'  # Replace with your IP
 ADMIN_PASSWORD = "CodeWithBss8923"  # Change this to your secret password
 RESULTS_RELEASED = False  # Memory-stored flag (can be improved)
 
