@@ -158,3 +158,29 @@ label.nota:hover {
   width: 200px;
 }
 
+.candidate {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.candidate input {
+  margin-right: 10px;
+}
+
+.candidate label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.leader-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid red;
+  object-fit: cover;
+}
+
