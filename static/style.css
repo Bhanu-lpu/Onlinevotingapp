@@ -271,10 +271,84 @@ footer {
   margin-bottom: 15px;
 }
 
-/* ================== DARK MODE FIXED ================== */
+/* -------- LIGHT MODE (default) -------- */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #e6ecf2, #e8edf4); /* Page background */
+  color: #111;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  max-width: 95%;
+  width: 350px;
+  margin: 2rem auto;
+}
+
+h1 {
+  text-align: center;
+  color: #222;
+}
+
+.candidate label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.leader-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid red;
+  object-fit: cover;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #2c3e50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #34495e;
+}
+
+.theme-toggle {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 13px;
+  color: #555;
+}
+/* -------- DARK MODE -------- */
 body.dark {
-  background-color: #121212;
-  color: #eee;
+  background-color: #0e0e0e;
+  background-image: none;
+  color: #e0e0e0;
 }
 
 body.dark .container {
@@ -283,39 +357,24 @@ body.dark .container {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-body.dark h1 {
-  color: #fff;
-}
-
-body.dark form label {
-  background-color: #2c2c2c;
-  border: 1px solid #444;
-  color: #fff;
+body.dark h1,
+body.dark label,
+body.dark footer {
+  color: #eee;
 }
 
 body.dark .candidate label {
   background-color: #2a2a2a;
-  border: 1px solid #555;
+  border: 1px solid #444;
 }
 
-body.dark input[type="submit"],
-body.dark input[type="reset"],
-body.dark input[type="button"],
 body.dark button {
   background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
+  color: white;
 }
 
-body.dark input[type="submit"]:hover,
-body.dark input[type="reset"]:hover,
-body.dark input[type="button"]:hover,
 body.dark button:hover {
   background-color: #555;
-}
-
-body.dark footer {
-  color: #aaa;
 }
 
 body.dark .theme-toggle button {
