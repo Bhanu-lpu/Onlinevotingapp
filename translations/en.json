@@ -1,1 +1,12 @@
-
+{
+  "title": "Online Voting System",
+  "vote": "Vote",
+  "thanks": "Thank you for voting!",
+  "already_voted": "⚠️ You have already voted.",
+  "no_candidate": "⚠️ No candidate selected.",
+  "results": "Results",
+  "admin_login": "Admin Login",
+  "release_results": "Release Results",
+  "hide_results": "Hide Results",
+  "logout": "Logout"
+}
