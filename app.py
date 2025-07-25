@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 import gspread
+import pytz
+
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
@@ -32,6 +34,7 @@ def index():
     show_results = get_results_flag() or user_ip == DEVELOPER_IP
     return render_template('index.html', show_results=show_results)
 
+
 @app.route('/vote', methods=['POST'])
 def vote():
     candidate = request.form.get('party')
@@ -43,9 +46,12 @@ def vote():
     if has_already_voted(user_ip):
         return "⚠️ You have already voted."
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ist = pytz.timezone('Asia/Kolkata')
+    now = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
+
     sheet.append_row([now, user_ip, candidate])
     return redirect(url_for('thanks'))
+
 
 @app.route('/thanks')
 def thanks():
