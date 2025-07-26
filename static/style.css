@@ -406,3 +406,27 @@ body.dark .theme-toggle button {
   color: white;
   border: 1px solid #666;
 }
+.announcement-box {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 600px;
+    color: #856404;
+    font-family: Arial, sans-serif;
+}
+
+.announcement-box h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.announcement-box ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.announcement-box li {
+    margin-bottom: 8px;
+}
