@@ -406,27 +406,38 @@ body.dark .theme-toggle button {
   color: white;
   border: 1px solid #666;
 }
+/* Style for the announcement box */
 .announcement-box {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+    background-color: #fff8dc;
+    color: #333;
+    border-left: 6px solid #ffc107;
     padding: 15px;
-    border-radius: 8px;
-    margin: 20px auto;
-    max-width: 600px;
-    color: #856404;
-    font-family: Arial, sans-serif;
+    border-radius: 10px;
+    margin: 20px;
+    max-width: 350px;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
+/* Announcement title */
 .announcement-box h2 {
-    margin-top: 0;
-    font-size: 20px;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
 }
 
-.announcement-box ul {
-    padding-left: 20px;
-    margin: 0;
-}
+/* Responsive: Stack content on small screens */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
 
-.announcement-box li {
-    margin-bottom: 8px;
+    .announcement-box {
+        width: 90%;
+        margin-top: 20px;
+    }
+
+    .vote-box {
+        width: 90%;
+    }
 }
