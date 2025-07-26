@@ -20,15 +20,15 @@
     <div class="theme-toggle">
       <button id="themeButton">{{ t["theme_button"] }}</button>
     </div>
+<form method="get" action="/" style="margin-bottom: 1rem;">
+  <label for="lang">{{ t["language_label"] | default("Language") }}: </label>
+  <select name="lang" onchange="this.form.submit()">
+    <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+    <option value="te" {% if lang == 'te' %}selected{% endif %}>తెలుగు</option>
+    <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिन्दी</option>
+  </select>
+</form>
 
-    <form method="get" action="/" style="margin-bottom: 1rem;">
-      <label for="lang">{{ t["language_label"] }}: </label>
-      <select name="lang" onchange="this.form.submit()">
-        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
-        <option value="te" {% if lang == 'te' %}selected{% endif %}>తెలుగు</option>
-        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिन्दी</option>
-      </select>
-    </form>
 
     <form action="/vote" method="post">
       <div class="candidate">
