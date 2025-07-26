@@ -1,10 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Thank You</title>
+    <meta charset="UTF-8">
+    <title>Thank You!</title>
+    <style>
+        body {
+            background-color: #f0fff0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .checkmark-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop 0.4s ease-out forwards;
+        }
+
+        .checkmark {
+            width: 60px;
+            height: 30px;
+            border-left: 6px solid white;
+            border-bottom: 6px solid white;
+            transform: rotate(-45deg);
+            animation: draw 0.4s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes draw {
+            to {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h2 style="text-align:center;">✅ Your vote has been submitted successfully!</h2>
-
+    <div class="checkmark-circle">
+        <div class="checkmark"></div>
+    </div>
+    <h2>Your vote has been submitted successfully!</h2>
 </body>
 </html>
