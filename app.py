@@ -47,11 +47,17 @@ def get_announcements(sheet_id, sheet_name='Sheet1'):
 @app.route('/')
 def index():
     announcements = get_announcements("1cKv_LHMnINYO48JtEpuIaxR07diO1GN98XhpcKvns3Y")
-    return render_template("index.html", announcements=announcements)
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
     voted = session.get("voted", False)
-    return render_template('index.html', show_results=show_results, voted=voted)
+
+    return render_template(
+        'index.html',
+        announcements=announcements,
+        show_results=show_results,
+        voted=voted
+    )
+
 
 @app.route('/vote', methods=['POST'])
 def vote():
