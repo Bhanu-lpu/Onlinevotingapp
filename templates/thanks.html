@@ -69,5 +69,16 @@
     <audio autoplay>
         <source src="{{ url_for('static', filename='sounds/pop-up-something-160353.mp3') }}" type="audio/mpeg">
     </audio>
+    <script>
+    window.onload = function () {
+        const audio = document.querySelector("audio");
+        if (audio) {
+            audio.play().catch(function (error) {
+                console.log("Autoplay failed:", error);
+            });
+        }
+    };
+</script>
+
 </body>
 </html>
