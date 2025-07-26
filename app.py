@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, session, f
 import gspread
 import pytz
 import os
+import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
@@ -27,11 +28,16 @@ def has_already_voted(user_ip):
 def get_results_flag():
     return session.get("results_released", RESULTS_RELEASED)
 
-def get_announcements():
+
+
+def get_announcements(sheet_id, sheet_name='Sheet1'):
+    url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
     try:
-        sheet = client.open_by_key(SHEET_ID).worksheet('Sheet1')
-        values = sheet.col_values(1)  # Only first column
-        return values
+        response = requests.get(url)
+        response.raise_for_status()
+        lines = response.text.strip().split('\n')[1:]  # skip header
+        announcements = [line.strip() for line in lines if line.strip()]
+        return announcements
     except Exception as e:
         print("Error fetching announcements:", e)
         return []
