@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="en">
 <head>
-  <title>{{ t["title"] }}</title>
+  <title>Online Voting System</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -10,25 +10,16 @@
 
   {% if voted and show_results %}
   <div class="notification" style="background-color: #d4edda; padding: 10px; border: 1px solid green; color: green; border-radius: 5px; margin-bottom: 15px;">
-      📢 {{ t["results_released"] }} <a href="/results?lang={{ lang }}">{{ t["click_here"] }}</a>.
+      📢 Results have been released. <a href="/results">Click here</a>.
   </div>
   {% endif %}
 
   <div class="container">
-    <h1>{{ t["title"] }}</h1>
+    <h1>Online Voting System</h1>
 
     <div class="theme-toggle">
-      <button id="themeButton">{{ t["theme_button"] }}</button>
+      <button id="themeButton">🌙 Dark Mode</button>
     </div>
-<form method="get" action="/" style="margin-bottom: 1rem;">
-  <label for="lang">{{ t["language_label"] | default("Language") }}: </label>
-  <select name="lang" onchange="this.form.submit()">
-    <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
-    <option value="te" {% if lang == 'te' %}selected{% endif %}>తెలుగు</option>
-    <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिन्दी</option>
-  </select>
-</form>
-
 
     <form action="/vote" method="post">
       <div class="candidate">
@@ -63,12 +54,11 @@
         </label>
       </div>
 
-<button type="button" class="btn clear-btn">🗑️ Clear Vote</button>
-
-
+      <input type="button" value="Clear Vote" class="clear-btn" onclick="clearSelection()">
+      <input type="submit" value="Vote" class="vote-btn">
 
       {% if show_results %}
-        <a href="{{ url_for('results', lang=lang) }}" class="btn btn-primary mt-3">{{ t["view_results"] }}</a>
+        <a href="{{ url_for('results') }}" class="btn btn-primary mt-3">View Results</a>
       {% endif %}
     </form>
 
@@ -89,7 +79,7 @@
 
     if (localStorage.getItem('theme') === 'dark') {
       body.classList.add('dark');
-      button.textContent = '{{ t["theme_button"].replace("🌙", "🌞").replace("Dark", "Light") }}';
+      button.textContent = '🌞 Light Mode';
     }
 
     button.onclick = () => {
