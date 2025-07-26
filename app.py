@@ -40,6 +40,8 @@ def get_announcements():
 # === Routes ===
 @app.route('/')
 def index():
+    announcements = get_announcements()
+    return render_template("index.html", announcements=announcements)
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
     voted = session.get("voted", False)
