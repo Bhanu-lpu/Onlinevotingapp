@@ -446,3 +446,20 @@ body.dark .theme-toggle button {
     justify-content: space-around;
     flex-wrap: wrap;
 }
+.announcement-box {
+    background-color: #fffbe6;
+    padding: 15px;
+    border-radius: 10px;
+    color: #333;
+    margin-top: 10px;
+}
+.announcement-box h3 {
+    margin-top: 0;
+}
+.announcement-box ul {
+    padding-left: 20px;
+}
+.announcement-box li {
+    margin-bottom: 5px;
+}
+
