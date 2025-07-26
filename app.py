@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 import gspread
 import pytz
-import json
 import os
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
@@ -21,14 +20,6 @@ client = gspread.authorize(creds)
 sheet = client.open("OnlineVotingData").sheet1
 
 # === Utility Functions ===
-def load_translation(lang_code):
-    path = os.path.join("translations", f"{lang_code}.json")
-    if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as file:
-            return json.load(file)
-    with open("translations/en.json", "r", encoding="utf-8") as fallback:
-        return json.load(fallback)
-
 def has_already_voted(user_ip):
     records = sheet.get_all_records()
     return any(record.get("IP Address") == user_ip for record in records)
@@ -39,56 +30,41 @@ def get_results_flag():
 # === Routes ===
 @app.route('/')
 def index():
-    lang = request.args.get("lang", "en")
-    session['lang'] = lang
-    translations = load_translation(lang)
-
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
     voted = session.get("voted", False)
-
-    return render_template('index.html', show_results=show_results, voted=voted, t=translations, lang=lang)
-
+    return render_template('index.html', show_results=show_results, voted=voted)
 
 @app.route('/vote', methods=['POST'])
 def vote():
     candidate = request.form.get('party')
-    lang = session.get('lang', 'en')
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     if not candidate:
         flash("⚠️ No candidate selected", "error")
-        return redirect(url_for('index', lang=lang))
+        return redirect(url_for('index'))
 
     if has_already_voted(user_ip):
         flash("⚠️ You have already voted.", "error")
-        return redirect(url_for('index', lang=lang))
+        return redirect(url_for('index'))
 
     ist = pytz.timezone('Asia/Kolkata')
     now = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
-
-    # Make sure these headers are exactly in the sheet: Timestamp | IP Address | Candidate
     sheet.append_row([now, user_ip, candidate])
     session['voted'] = True
 
-    return redirect(url_for('thanks', lang=lang))
-
+    return redirect(url_for('thanks'))
 
 @app.route('/thanks')
 def thanks():
-    lang = session.get('lang', 'en')
-    translations = load_translation(lang)
-    return render_template('thanks.html', t=translations, lang=lang)
-
+    return render_template('thanks.html')
 
 @app.route('/results')
 def results():
-    lang = session.get('lang', 'en')
-    translations = load_translation(lang)
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     if not session.get("results_released", RESULTS_RELEASED) and user_ip != DEVELOPER_IP:
-        return render_template("comingsoon.html", t=translations, lang=lang)
+        return render_template("comingsoon.html")
 
     records = sheet.get_all_records()
     result_count = {}
@@ -98,14 +74,10 @@ def results():
         if candidate:
             result_count[candidate] = result_count.get(candidate, 0) + 1
 
-    return render_template("results.html", votes=result_count, t=translations, lang=lang)
-
+    return render_template("results.html", votes=result_count)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
-    lang = session.get('lang', 'en')
-    translations = load_translation(lang)
-
     if request.method == 'POST':
         password = request.form.get('password')
         if password == ADMIN_PASSWORD:
@@ -113,9 +85,7 @@ def admin_login():
             return redirect(url_for('admin_dashboard'))
         else:
             flash("❌ Incorrect password", "error")
-
-    return render_template('admin_login.html', t=translations, lang=lang)
-
+    return render_template('admin_login.html')
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 def admin_dashboard():
@@ -123,8 +93,6 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
 
     global RESULTS_RELEASED
-    lang = session.get('lang', 'en')
-    translations = load_translation(lang)
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -135,21 +103,18 @@ def admin_dashboard():
             RESULTS_RELEASED = False
             session['results_released'] = False
 
-    return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED, t=translations, lang=lang)
-
+    return render_template("admin_dashboard.html", results_released=RESULTS_RELEASED)
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
 @app.route('/clear')
 def clear_votes():
+    # This route simply redirects back; clearing is done via JS on the client
     return redirect(url_for('index'))
-
 
 # === Run App ===
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)), debug=True)
-
