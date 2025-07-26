@@ -441,3 +441,8 @@ body.dark .theme-toggle button {
         width: 90%;
     }
 }
+.container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
