@@ -46,7 +46,7 @@ def get_announcements(sheet_id, sheet_name='Sheet1'):
 # === Routes ===
 @app.route('/')
 def index():
-    announcements = get_announcements()
+    announcements = get_announcements("1cKv_LHMnINYO48JtEpuIaxR07diO1GN98XhpcKvns3Y")
     return render_template("index.html", announcements=announcements)
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     show_results = session.get("results_released", RESULTS_RELEASED) or user_ip == DEVELOPER_IP
