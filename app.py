@@ -27,6 +27,16 @@ def has_already_voted(user_ip):
 def get_results_flag():
     return session.get("results_released", RESULTS_RELEASED)
 
+def get_announcements():
+    try:
+        sheet = client.open_by_key(SHEET_ID).worksheet('Sheet1')
+        values = sheet.col_values(1)  # Only first column
+        return values
+    except Exception as e:
+        print("Error fetching announcements:", e)
+        return []
+
+
 # === Routes ===
 @app.route('/')
 def index():
